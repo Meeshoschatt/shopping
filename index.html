@@ -470,7 +470,7 @@ input{font-family:inherit;color:inherit;}
 
     <div class="id-card glass">
       <div class="id-card-label"><span class="pulse-dot" id="idStatusDot"></span> Your Friend ID</div>
-      <div class="id-value-row" style="display:none;">
+      <div class="id-value-row">
         <span class="id-value skeleton" id="myIdText"></span>
       </div>
       <div class="id-actions">
@@ -494,7 +494,7 @@ input{font-family:inherit;color:inherit;}
     <div class="connect-card glass">
       <label class="field-label" for="friendIdInput">Enter friend's ID</label>
       <div class="field-wrap">
-        <input id="friendIdInput" type="text" placeholder="e.g. cyan-otter-482" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40">
+        <input id="friendIdInput" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="e.g. 48213" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="5">
       </div>
       <div class="field-hint" id="friendIdHint"></div>
 
@@ -778,20 +778,18 @@ function refreshPremiumUI(){
 
 /* ============================================================
    1. FRIEND ID GENERATION
+   5-digit numeric IDs (10000–99999), matching PeerJS's simple
+   token requirement while staying short and easy to read aloud.
    ============================================================ */
-const ID_ADJ = ['cyan','swift','lunar','amber','violet','coral','misty','quiet','solar','ember','frost','vivid','azure','rapid','gentle','bold'];
-const ID_NOUN = ['otter','falcon','maple','comet','tiger','harbor','willow','ridge','ember','delta','breeze','summit','orbit','lotus','canyon','spark'];
-
 function generateFriendId(){
-  // Fixed default ID — always returns the same ID instead of a random one.
-  return '112233';
+  return String(Math.floor(10000 + Math.random()*90000));
 }
-// PeerJS IDs must be simple tokens — keep only safe characters.
+// PeerJS IDs must be simple tokens — keep only digits.
 function sanitizeId(raw){
-  return raw.trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
+  return raw.trim().replace(/[^0-9]/g,'').slice(0,5);
 }
 function isValidId(id){
-  return /^[a-z0-9-]{4,40}$/.test(id);
+  return /^[0-9]{5}$/.test(id);
 }
 
 /* ============================================================
@@ -1029,6 +1027,7 @@ $('newIdBtn').addEventListener('click', ()=>{
 
 const friendInput = $('friendIdInput');
 friendInput.addEventListener('input', ()=>{
+  friendInput.value = sanitizeId(friendInput.value);
   friendInput.classList.remove('invalid');
   $('friendIdHint').textContent = '';
 });
@@ -1043,7 +1042,7 @@ function validateFriendInput(){
   }
   if(!isValidId(raw)){
     friendInput.classList.add('invalid');
-    $('friendIdHint').textContent = 'Invalid Friend ID format.';
+    $('friendIdHint').textContent = 'Friend ID must be 5 digits.';
     return null;
   }
   if(raw === state.myId){

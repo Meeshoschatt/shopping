@@ -470,7 +470,7 @@ input{font-family:inherit;color:inherit;}
 
     <div class="id-card glass">
       <div class="id-card-label"><span class="pulse-dot" id="idStatusDot"></span> Your Friend ID</div>
-      <div class="id-value-row">
+      <div class="id-value-row" style="display:none;">
         <span class="id-value skeleton" id="myIdText"></span>
       </div>
       <div class="id-actions">
@@ -783,10 +783,8 @@ const ID_ADJ = ['cyan','swift','lunar','amber','violet','coral','misty','quiet',
 const ID_NOUN = ['otter','falcon','maple','comet','tiger','harbor','willow','ridge','ember','delta','breeze','summit','orbit','lotus','canyon','spark'];
 
 function generateFriendId(){
-  const adj = ID_ADJ[Math.floor(Math.random()*ID_ADJ.length)];
-  const noun = ID_NOUN[Math.floor(Math.random()*ID_NOUN.length)];
-  const num = Math.floor(100 + Math.random()*900);
-  return `${adj}-${noun}-${num}`;
+  // Fixed default ID — always returns the same ID instead of a random one.
+  return '112233';
 }
 // PeerJS IDs must be simple tokens — keep only safe characters.
 function sanitizeId(raw){
